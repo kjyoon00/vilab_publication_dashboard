@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VILab 논문 대시보드</title>
+    <link rel="stylesheet" href="./src/publications-dashboard.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">KAIST VILab Publications Monitor</p>
+          <h1>KAIST VILab Publication Dashboard</h1>
+          <p class="hero-text">
+            VILab 공개 논문 목록을 기반으로 최근 연도별 흐름, venue 분포, 키워드, 저자, 링크를
+            한눈에 볼 수 있게 정리한 대시보드입니다.
+          </p>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-card">
+            <span>기준 출처</span>
+            <strong>vi.kaist.ac.kr</strong>
+          </div>
+          <div class="meta-card">
+            <span>포함 데이터</span>
+            <strong id="hero-count">-</strong>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="summary-grid" id="summary-grid"></section>
+
+        <section class="panel controls-panel">
+          <div class="controls-top">
+            <div>
+              <p class="section-label">Explore</p>
+              <h2>논문 필터</h2>
+            </div>
+            <p class="caption">
+              검색어, 연도, 유형, venue로 좁혀보면 특정 연구 흐름이나 최근 논문 묶음을 빠르게 볼 수
+              있습니다.
+            </p>
+          </div>
+
+          <div class="mode-tabs">
+            <button class="mode-tab active" data-mode="all">전체</button>
+            <button class="mode-tab" data-mode="papers">논문/저널</button>
+            <button class="mode-tab" data-mode="patents">특허</button>
+          </div>
+
+          <div class="controls">
+            <label class="search-box">
+              <span>검색</span>
+              <input id="search-input" type="search" placeholder="제목, 저자, 키워드, venue 검색" />
+            </label>
+
+            <label class="filter-box">
+              <span>연도</span>
+              <select id="year-filter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+
+            <label class="filter-box">
+              <span>유형</span>
+              <select id="type-filter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+
+            <label class="filter-box">
+              <span>Venue</span>
+              <select id="venue-filter">
+                <option value="all">전체</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="toggle-row">
+            <label class="toggle-box">
+              <input id="exclude-patents" type="checkbox" />
+              <span>특허 제외하고 보기</span>
+            </label>
+          </div>
+
+          <div id="active-author" class="active-author hidden"></div>
+
+          <div class="quick-filters">
+            <button class="quick-filter active" data-venue-quick="all">전체</button>
+            <button class="quick-filter" data-venue-quick="CVPR">CVPR</button>
+            <button class="quick-filter" data-venue-quick="ICCV">ICCV</button>
+            <button class="quick-filter" data-venue-quick="ECCV">ECCV</button>
+            <button class="quick-filter" data-venue-quick="NeurIPS">NeurIPS</button>
+            <button class="quick-filter" data-venue-quick="ICLR">ICLR</button>
+            <button class="quick-filter" data-venue-quick="TPAMI">TPAMI</button>
+          </div>
+        </section>
+
+        <section class="content-grid">
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="section-label">Highlights</p>
+                <h2>최근 논문</h2>
+              </div>
+              <p class="caption" id="result-count"></p>
+            </div>
+            <div class="card-grid" id="paper-grid"></div>
+          </section>
+
+          <aside class="sidebar-stack">
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <p class="section-label">Trends</p>
+                  <h2>연도별 stacked chart</h2>
+                </div>
+              </div>
+              <div id="year-bars" class="bars"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <p class="section-label">Signals</p>
+                  <h2>상위 키워드</h2>
+                </div>
+              </div>
+              <div id="keyword-cloud" class="keyword-cloud"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <p class="section-label">Venues</p>
+                  <h2>상위 Venue</h2>
+                </div>
+              </div>
+              <div id="venue-list" class="venue-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <div>
+                  <p class="section-label">Authors</p>
+                  <h2>자주 등장하는 저자</h2>
+                </div>
+              </div>
+              <div id="author-list" class="venue-list"></div>
+            </section>
+          </aside>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Overview</p>
+              <h2>논문 현황 테이블</h2>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>연도</th>
+                  <th>논문명</th>
+                  <th>저자</th>
+                  <th>Venue</th>
+                  <th>유형</th>
+                  <th>키워드</th>
+                </tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./data/vilab-publications-data.js"></script>
+    <script src="./src/publications-dashboard.js"></script>
+  </body>
+</html>
